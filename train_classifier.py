@@ -38,24 +38,6 @@ def load_data(database_filepath):
     category_names = y.columns
     
     return X, y, category_names
-
-class StartingVerbExtractor(BaseEstimator, TransformerMixin): 
-
-    def starting_verb(self, text):
-        sentence_list = nltk.sent_tokenize(text)
-        for sentence in sentence_list:
-            pos_tags = nltk.pos_tag(tokenize(sentence))
-            first_word, first_tag = pos_tags[0]
-            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
-                return True
-        return False
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X_tagged = pd.Series(X).apply(self.starting_verb)
-        return pd.DataFrame(X_tagged)
     
     
 def tokenize(text):
@@ -91,9 +73,7 @@ def build_model():
             ('text_pipeline', Pipeline([
                 ('vect', CountVectorizer(tokenizer=tokenize)),
                 ('tfidf', TfidfTransformer())
-            ])),
-
-            ('starting_verb', StartingVerbExtractor())
+            ]))
         ])),
     
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
@@ -101,7 +81,7 @@ def build_model():
     
     # defining parameters for grid search
     parameters = {
-    'clf__estimator__n_estimators': [5] # 5 fits
+    'clf__estimator__n_estimators': [2] # 5 fits
     }
     
     # performing grid search
