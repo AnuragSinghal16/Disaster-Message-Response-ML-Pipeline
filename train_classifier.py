@@ -1,6 +1,7 @@
 
 # import libraries
 import sys
+import os
 import re
 import pickle
 import nltk
@@ -10,7 +11,7 @@ import numpy as np
 from sqlalchemy import create_engine
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import WordNetLemmatizer
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -115,12 +116,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = model.predict(X_test)
     
     # extract a classification report to evaluate performance
-    print(classification_report(y_test.values, y_pred, target_names=category_names))
+    #print(classification_report(Y_test.values, y_pred, target_names=category_names))
 
 
 def save_model(model, model_filepath):
     # save model in pickle file
-    with open('classifier.pkl', 'wb') as f:
+    with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 
 
