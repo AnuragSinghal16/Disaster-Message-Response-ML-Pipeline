@@ -4,12 +4,34 @@ import numpy as np
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """ 
+    input - "messages.csv" and "categories.csv"
+    
+    output - a merged database containing both messages and its categories
+    
+    """
+    
+    
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = pd.merge(messages, categories, how="left", on=["id"])
     return df
 
 def clean_data(df):
+     """ 
+    input - merged df from the previous step
+    
+    output - df with "caetgories" column replaced with individual categories as columns
+    
+    1. this function will input category names
+    2. split the category on a delimeter
+    3. create a list of unique categories
+    4. exclude the unwanted characters and append to an empty list
+    5. assign the last character numeric in the category to the "categories" data columns
+    6. drop the "categories" column from df and add individual categories as columns
+    
+    """
+    
     # creating a categories data frame to clean text
     categories = df["categories"].str.split(";", expand=True)
     
@@ -51,6 +73,14 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+     """ 
+    input - 1. dataframe from previous step
+            2. database filename on SQL server to upload df
+            
+    this step will upload the final database to an SQLite server
+    
+    """
+
      # loading dataframe to the SQL server
     engine = create_engine('sqlite:///'+ database_filename)
     df.to_sql("Message_Categorised", engine, index=False, )  
