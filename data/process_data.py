@@ -18,7 +18,7 @@ def load_data(messages_filepath, categories_filepath):
     return df
 
 def clean_data(df):
-     """ 
+    """ 
     input - merged df from the previous step
     
     output - df with "caetgories" column replaced with individual categories as columns
@@ -69,11 +69,15 @@ def clean_data(df):
     # keeping the first instance
     df.drop_duplicates(keep="first", inplace=True)
     
+    # as max last character of "related" is 2
+    # we will convert 2 to 1 to keep it binary
+    df['related'] = df['related'].map(lambda x: 1 if x==2 else x)
+    
     return df
 
 
 def save_data(df, database_filename):
-     """ 
+    """ 
     input - 1. dataframe from previous step
             2. database filename on SQL server to upload df
             
@@ -83,7 +87,7 @@ def save_data(df, database_filename):
 
      # loading dataframe to the SQL server
     engine = create_engine('sqlite:///'+ database_filename)
-    df.to_sql("Message_Categorised", engine, index=False)  
+    df.to_sql("Message_Categorised", engine, index=False, if_exists="replace")  
 
 
 def main():
